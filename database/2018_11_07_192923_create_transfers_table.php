@@ -15,7 +15,9 @@ class CreateTransfersTable extends Migration
         Schema::create($this->table(), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('from');
-            $table->morphs('to');
+            $table->string(($name = 'to') . "_type");
+            $table->string("{$name}_id");
+            $table->index(["{$name}_type", "{$name}_id"]);
             $table
                 ->enum(
                     'status',

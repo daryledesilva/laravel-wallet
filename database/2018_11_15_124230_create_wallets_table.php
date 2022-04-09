@@ -14,7 +14,9 @@ class CreateWalletsTable extends Migration
     {
         Schema::create($this->table(), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->morphs('holder');
+            $table->string(($name = 'holder') . "_type");
+            $table->string("{$name}_id");
+            $table->index(["{$name}_type", "{$name}_id"]);
             $table->string('name');
             $table->string('slug')->index();
             $table->uuid('uuid')->unique();

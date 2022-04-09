@@ -22,7 +22,7 @@ interface TransferDtoInterface
 
     public function getToType(): string;
 
-    public function getToId(): int;
+    public function getToId(): string;
 
     public function getDiscount(): int;
 

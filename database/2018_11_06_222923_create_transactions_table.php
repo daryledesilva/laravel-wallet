@@ -13,7 +13,9 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create($this->table(), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->morphs('payable');
+            $table->string(($name = 'payable') . "_type");
+            $table->string("{$name}_id");
+            $table->index(["{$name}_type", "{$name}_id"]);
             $table->unsignedBigInteger('wallet_id');
             $table->enum('type', ['deposit', 'withdraw'])->index();
             $table->decimal('amount', 64, 0);

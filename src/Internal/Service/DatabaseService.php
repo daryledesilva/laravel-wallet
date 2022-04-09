@@ -33,28 +33,29 @@ final class DatabaseService implements DatabaseServiceInterface
      * @throws RecordsNotFoundException
      * @throws TransactionFailedException
      * @throws ExceptionInterface
+     * @throws Throwable
      *
      * @return mixed
      */
     public function transaction(callable $callback)
     {
         try {
-            if ($this->connection->transactionLevel() > 0) {
-                return $callback();
-            }
-
-            $this->regulatorService->purge();
-
-            return $this->connection->transaction(function () use ($callback) {
+//            if ($this->connection->transactionLevel() > 0) {
+//                return $callback();
+//            }
+//
+//            $this->regulatorService->purge();
+//
+//            return $this->connection->transaction(function () use ($callback) {
                 $result = $callback();
                 if ($result === false || (is_countable($result) && count($result) === 0)) {
                     $this->regulatorService->purge();
                 } else {
                     $this->regulatorService->approve();
                 }
-
+//
                 return $result;
-            });
+//            });
         } catch (RecordsNotFoundException|ExceptionInterface $exception) {
             $this->regulatorService->purge();
 
@@ -62,11 +63,12 @@ final class DatabaseService implements DatabaseServiceInterface
         } catch (Throwable $throwable) {
             $this->regulatorService->purge();
 
-            throw new TransactionFailedException(
-                'Transaction failed',
-                ExceptionInterface::TRANSACTION_FAILED,
-                $throwable
-            );
+            throw $throwable;
+//            throw new TransactionFailedException(
+//                'Transaction failed',
+//                ExceptionInterface::TRANSACTION_FAILED,
+//                $throwable
+//            );
         }
     }
 }
